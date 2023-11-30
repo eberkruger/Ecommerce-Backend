@@ -63,20 +63,44 @@ export default class ProductsService {
   updateProduct = async (id, product, productReq, token) => {
     const decodedToken = jwt.verify(token, CONFIG.JWT_SECRET)
 
-    if(decodedToken.rol === 'ADMIN' || (decodedToken.rol === 'PREMIUM' && decodedToken.email === product.owner)){
+    if (decodedToken.rol === 'ADMIN' || (decodedToken.rol === 'PREMIUM' && decodedToken.email === product.owner)) {
       const result = await productsService.updateProduct(id, productReq)
 
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-      if(decodedToken.rol === 'ADMIN' && regex.test(product.owner)){
+      if (decodedToken.rol === 'ADMIN' && regex.test(product.owner)) {
         const email = {
-            to: product.owner,
-            subject:  'Producto Modificado', 
-            html: productUpdateNotification
+          to: product.owner,
+          subject: 'Producto Modificado',
+          html: productUpdateNotification
         }
         await sendEmail(email)
+      }
+      return result
+    } else {
+      throw new RolForbiden("User does not owner of product")
     }
-  }}
+  }
 
+  deleteById = async (id, token, product) => {
+    const decodedToken = jwt.verify(token, CONFIG.JWT_SECRET)
 
+    if (decodedToken.rol === 'ADMIN' || (decodedToken.rol === 'PREMIUM' && decodedToken.email === product.owner)) {
+      const result = await productsService.deleteById(id)
+
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+      if (decodedToken.rol === 'ADMIN' && regex.test(product.owner)) {
+        const email = {
+          to: product.owner,
+          subject: 'Producto Eliminado',
+          html: productDeleteNotification
+        }
+        await sendEmail(email)
+      }
+      return result
+    }else {
+      throw new RolForbiden("User does not owner of product")
+    }
+  }
 }
