@@ -13,7 +13,7 @@ export default class CartsRepository {
   }
 
   save = async (cart) => {
-    const result = await cartsManagerDB.save()
+    const result = await cartsManagerDB.save({})
     return result
   }
   
