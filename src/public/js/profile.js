@@ -32,7 +32,7 @@ const handleFormSubmit = async (event, form) => {
     console.error(error)
   }
 
-};
+}
 
 forms.forEach(form => {
   const fileInput = form.querySelector('.fileInput')
@@ -41,8 +41,6 @@ forms.forEach(form => {
     await handleFormSubmit(event, form)
   })
 })
-
-
 
 const fileInputs = document.querySelectorAll('.fileInput')
 
